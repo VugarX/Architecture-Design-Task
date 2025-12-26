@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: api
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  destination:
+    namespace: api-dev
+    server: https://kubernetes.default.svc
+  project: development
+  sources:
+  - repoURL: https://github.com/VuqarX/api.git
+    path: chart
+    targetRevision: development
+    helm:
+      valueFiles:
+        - $values/dev/argocd/apps/api/values.yml
+      parameters:
+        - name: stage
+          value: dev
+  - repoURL: https://github.com/VuqarX/argocd-apps.git
+    targetRevision: main
+    ref: values
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
+      - ServerSideApply=true

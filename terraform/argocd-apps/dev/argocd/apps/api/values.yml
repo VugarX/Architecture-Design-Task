@@ -1,0 +1,63 @@
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: true
+  className: "traefik"
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    cert-manager.io/cluster-issuer: "letsencrypt-cloudflare"
+  hosts:
+    - host: api.dev
+      paths:
+        - path: /
+          pathType: ImplementationSpecific      
+  tls:
+   - secretName: api-tls
+     hosts:
+       - api.dev    
+
+resources: {}
+  #new rule
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 80
+  
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+secrets:
+  - NODE_ENV
+  - PORT
+  - FE_URL
+  - DB_PASSWORD
+  - DB_HOST
+  - DB_USERNAME
+  - DB_DATABASE
+  - DB_PORT
+  - REDIS_HOST
+  - REDIS_PORT
+  - REDIS_USER
+  - REDIS_PASSWORD
+  - REGISTRATION_INVITE_EXPIRES_TIME
+  - JWT_SECRET
+  - JWT_TOKEN_AUDIENCE
+  - JWT_TOKEN_ISSUER
+  - JWT_ACCESS_TOKEN_TTL
+  - JWT_REFRESH_TOKEN_TTL
+  - MAILGUN_API_KEY
+  - AWS_ACCESS_KEY_ID
+  - AWS_SECRET_ACCESS_KEY
+  - AWS_REGION
+  - AWS_S3_BUCKET_NAME
+
+
+
+

@@ -1,0 +1,30 @@
+xx`accessLogs:
+  enabled: false
+externalTrafficPolicy: Local
+rbac:
+  enabled: true
+replicas: 1
+service:
+  annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: nlb
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+      service.beta.kubernetes.io/aws-load-balancer-subnets: subnet-0e1e21210564db803, subnet-03e07cf72a362239f
+      service.beta.kubernetes.io/aws-load-balancer-eip-allocations: eipalloc-06662db50440428be,eipalloc-0d2c6b9dc676ccc71
+providers:
+  kubernetesIngress:
+    publishedService:
+      enabled: true
+
+tls:
+  options:
+    default:
+      minVersion: VersionTLS12
+      cipherSuites:
+        - TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        - TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305
+        - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305
+        - TLS_RSA_WITH_AES_128_GCM_SHA256 
+

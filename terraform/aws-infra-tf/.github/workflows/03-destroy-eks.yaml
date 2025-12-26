@@ -1,0 +1,46 @@
+name: Destroy EKS Application
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write 
+  contents: write 
+env:
+  AWS_REGION: eu-central-1
+
+jobs:
+  terraform:
+    name: Destroy EKS
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.6.6
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          role-to-assume: arn:aws:iam::123456789:role/github-oidc-access-role1
+          role-session-name: destroy-eks-${{ github.run_id }}
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Configure GIT_ASKPASS for private module access
+        run: |
+          echo "echo \"${{ secrets.GH_PAT }}\"" > git_askpass.sh
+          chmod +x git_askpass.sh
+        env:
+          GIT_ASKPASS: ${{ github.workspace }}/git_askpass.sh
+    
+
+      - name: Terraform Init & Apply
+        env:
+          GIT_ASKPASS: ${{ github.workspace }}/git_askpass.sh
+        run: |
+          cd development/eks
+          terraform init
+          terraform destroy -auto-approve
